@@ -3,9 +3,11 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 class FloorPickWindow(QDialog):
+    lift_called_signal = pyqtSignal(tuple)
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.call_lift_pb.clicked.connect(self.call_lift_pb_clicked)
         # self.show()
 
     def setupUi(self, Dialog):
@@ -26,6 +28,8 @@ class FloorPickWindow(QDialog):
 
         self.go_up_rb = QRadioButton(Dialog)
         self.go_up_rb.setObjectName(u"go_up_rb")
+
+        self.go_up_rb.setChecked(True)
 
         self.verticalLayout.addWidget(self.go_up_rb)
 
@@ -52,3 +56,13 @@ class FloorPickWindow(QDialog):
         self.go_down_rb.setText(QCoreApplication.translate("Dialog", u"\u0415\u0445\u0430\u0442\u044c \u0432\u043d\u0438\u0437", None))
         self.call_lift_pb.setText(QCoreApplication.translate("Dialog", u"\u0412\u044b\u0437\u0432\u0430\u0442\u044c", None))
     # retranslateUi
+
+    def call_lift_pb_clicked(self):
+        floor = int(self.floor_number_le.text())
+        self.close()
+        direction = 0
+        if self.go_up_rb.isChecked():
+            direction = 1
+        else:
+            direction = -1
+        self.lift_called_signal.emit((floor, direction))

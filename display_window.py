@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import *
 
 class DisplayWindow(QMainWindow):
     def __init__(self):
+        self.lift1_floor = 0
+        self.lift2_floor = 0
         super().__init__()
         self.setupUi(self)
         self.show()
@@ -108,6 +110,9 @@ class DisplayWindow(QMainWindow):
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
+
+        self.lift1_tw.item(8, 0).setBackground(QColor("green"))
+        self.lift2_tw.item(8, 0).setBackground(QColor("green"))
     # setupUi
 
     def retranslateUi(self, MainWindow):
@@ -166,3 +171,15 @@ class DisplayWindow(QMainWindow):
 
     def set_passengers_lift2(self, passengers, floor):
         self.lift2_tw.item(8 - floor, 1).setText(f'↑: {passengers[0]} ↓: {passengers[1]}')
+
+    def change_elevator_floor(self, num_elevator, new_floor):
+        print('change elev flor')
+        if num_elevator == 0:
+            self.lift1_tw.item(8 - self.lift1_floor, 0).setBackground(QColor("white"))
+            self.lift1_floor = new_floor
+            self.lift1_tw.item(8 - self.lift1_floor, 0).setBackground(QColor("green"))
+        else:
+            self.lift2_tw.item(8 - self.lift2_floor, 0).setBackground(QColor("white"))
+            self.lift2_floor = new_floor
+            self.lift2_tw.item(8 - self.lift2_floor, 0).setBackground(QColor("green"))
+        self.repaint()

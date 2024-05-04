@@ -13,6 +13,8 @@ class ControlWindow(QDialog):
         self.setupUi(self)
         self.show()
 
+        self.house = House(2, 0, 0)
+
         self.display_window = DisplayWindow()
         self.display_window.show()
 
@@ -21,11 +23,19 @@ class ControlWindow(QDialog):
         self.passenger_window_2.liftname_label.setText('Лифт подъезда 2')
         self.lift1_passenger_bt.clicked.connect(self.lift1_passenger_bt_clicked)
         self.lift2_passenger_bt.clicked.connect(self.lift2_passenger_bt_clicked)
-
-        self.house = House(0, 0, 0)
-
         self.passenger_window_1.save_passenger_signal.connect(self.lift1_save_all_passenger)
         self.passenger_window_2.save_passenger_signal.connect(self.lift2_save_all_passenger)
+
+
+
+        self.floorpick_window_1 = FloorPickWindow()
+        self.floorpick_window_2 = FloorPickWindow()
+        self.lift1_floorpick_bt.clicked.connect(self.lift1_floorpick_bt_clicked)
+        self.lift2_floorpick_bt.clicked.connect(self.lift2_floorpick_bt_clicked)
+        self.floorpick_window_1.lift_called_signal.connect(self.lift1_called)
+        self.floorpick_window_2.lift_called_signal.connect(self.lift2_called)
+
+
 
 
         # self.
@@ -76,18 +86,33 @@ class ControlWindow(QDialog):
 
     def set_house(self, house):
         self.house = house
+        self.house.elevator1_moved_signal.connect(self.lift1_moved)
+        self.house.elevator2_moved_signal.connect(self.lift2_moved)
 
     def lift1_save_all_passenger(self, passengers):
         for i in range(0, 9):
-            self.house.floors[0][i].add_passengers(passengers[i])
+            self.house.add_passangers_to_floor(0, i, passengers[i])
             self.display_window.set_passengers_lift1(passengers[i], i)
 
     def lift2_save_all_passenger(self, passengers):
         for i in range(0, 9):
-            self.house.floors[1][i].add_passengers(passengers[i])
+            self.house.add_passangers_to_floor(1, i, passengers[i])
             self.display_window.set_passengers_lift2(passengers[i], i)
 
+    def lift1_floorpick_bt_clicked(self):
+        self.floorpick_window_1.show()
 
+    def lift2_floorpick_bt_clicked(self):
+        self.floorpick_window_2.show()
 
+    def lift1_called(self, t):
+        self.house.call_elevator(0, t[0], t[1])
 
+    def lift2_called(self, t):
+        self.house.call_elevator(1, t[0], t[1])
 
+    def lift1_moved(self, floor_num):
+        self.display_window.change_elevator_floor(0, floor_num)
+
+    def lift2_moved(self, floor_num):
+        self.display_window.change_elevator_floor(1, floor_num)
