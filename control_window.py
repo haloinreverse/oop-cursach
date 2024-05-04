@@ -33,7 +33,6 @@ class ControlWindow(QDialog):
         self.lift2_floorpick_bt.clicked.connect(self.lift2_floorpick_bt_clicked)
         self.floorpick_window_1.lift_called_signal.connect(self.lift1_called)
         self.floorpick_window_2.lift_called_signal.connect(self.lift2_called)
-
         # self.
 
     def setupUi(self, Dialog):
@@ -100,6 +99,8 @@ class ControlWindow(QDialog):
         self.house.elevator2_moved_signal.connect(self.lift2_moved)
         self.house.elevator1_arrived_signal.connect(self.lift1_arrived)
         self.house.elevator2_arrived_signal.connect(self.lift2_arrived)
+        self.house.elevator1_passengers_left_signal.connect(self.elevator_1_passangers_left)
+        self.house.elevator2_passengers_left_signal.connect(self.elevator_2_passangers_left)
 
     def lift1_save_all_passenger(self, passengers):
         for i in range(0, 9):
@@ -176,16 +177,24 @@ class ControlWindow(QDialog):
                 self.house.floors[0][t[1]].add_passengers((0, -len(self.destinations_1)))
             self.display_window.change_elevator_num(0, len(self.destinations_1))
             self.house.add_passengers_to_elevator(0, self.destinations_1)
+            self.house.start_moving_elevator(0)
 
     def fp_window_closed_2(self, t):
         self.counter_2 -= 1
         self.destinations_2.append(t[2])
         if self.counter_2 == 0:
             self.fp_windows_2.clear()
-            self.display_window.change_passengers_lift1(len(self.destinations_2), t[1], t[0])
+            self.display_window.change_passengers_lift2(len(self.destinations_2), t[1], t[0])
             if t[0] == 1:
                 self.house.floors[1][t[1]].add_passengers((-len(self.destinations_2), 0))
             else:
                 self.house.floors[1][t[1]].add_passengers((0, -len(self.destinations_2)))
             self.display_window.change_elevator_num(1, len(self.destinations_2))
             self.house.add_passengers_to_elevator(1, self.destinations_2)
+            self.house.start_moving_elevator(1)
+
+    def elevator_1_passangers_left(self, num):
+        self.display_window.change_elevator_num(0, -num)
+
+    def elevator_2_passangers_left(self, num):
+        self.display_window.change_elevator_num(1, -num)

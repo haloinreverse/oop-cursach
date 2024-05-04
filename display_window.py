@@ -202,11 +202,11 @@ class DisplayWindow(QMainWindow):
             self.lift1_tw.item(8 - self.lift1_floor, 0).setText(text)
         else:
             self.lift2_tw.item(8 - self.lift2_floor, 0).setBackground(QColor("white"))
-            text = self.lift1_tw.item(8 - self.lift1_floor, 0).text()
-            self.lift2_tw.item(8 - self.lift1_floor, 0).setText("")
+            text = self.lift2_tw.item(8 - self.lift2_floor, 0).text()
+            self.lift2_tw.item(8 - self.lift2_floor, 0).setText("")
             self.lift2_floor = new_floor
             self.lift2_tw.item(8 - self.lift2_floor, 0).setBackground(QColor("green"))
-            self.lift2_tw.item(8 - self.lift1_floor, 0).setText(text)
+            self.lift2_tw.item(8 - self.lift2_floor, 0).setText(text)
         self.repaint()
 
     def change_elevator_num(self, num_elevator, change_num):
