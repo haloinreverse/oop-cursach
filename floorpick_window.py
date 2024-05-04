@@ -58,7 +58,7 @@ class FloorPickWindow(QDialog):
     # retranslateUi
 
     def call_lift_pb_clicked(self):
-        floor = int(self.floor_number_le.text())
+        floor = int(self.floor_number_le.text()) - 1
         self.close()
         direction = 0
         if self.go_up_rb.isChecked():

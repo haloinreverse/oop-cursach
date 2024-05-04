@@ -3,9 +3,10 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from display_window import DisplayWindow
 from main import House
-from passanger_window import PassangerWindow
+from passenger_window import PassengerWindow
 from floorpick_window import FloorPickWindow
 from floor_passanger_window import FloorPassengerWindow
+
 
 class ControlWindow(QDialog):
     def __init__(self):
@@ -18,15 +19,13 @@ class ControlWindow(QDialog):
         self.display_window = DisplayWindow()
         self.display_window.show()
 
-        self.passenger_window_1 = PassangerWindow()
-        self.passenger_window_2 = PassangerWindow()
+        self.passenger_window_1 = PassengerWindow()
+        self.passenger_window_2 = PassengerWindow()
         self.passenger_window_2.liftname_label.setText('Лифт подъезда 2')
         self.lift1_passenger_bt.clicked.connect(self.lift1_passenger_bt_clicked)
         self.lift2_passenger_bt.clicked.connect(self.lift2_passenger_bt_clicked)
         self.passenger_window_1.save_passenger_signal.connect(self.lift1_save_all_passenger)
         self.passenger_window_2.save_passenger_signal.connect(self.lift2_save_all_passenger)
-
-
 
         self.floorpick_window_1 = FloorPickWindow()
         self.floorpick_window_2 = FloorPickWindow()
@@ -34,9 +33,6 @@ class ControlWindow(QDialog):
         self.lift2_floorpick_bt.clicked.connect(self.lift2_floorpick_bt_clicked)
         self.floorpick_window_1.lift_called_signal.connect(self.lift1_called)
         self.floorpick_window_2.lift_called_signal.connect(self.lift2_called)
-
-
-
 
         # self.
 
@@ -66,16 +62,30 @@ class ControlWindow(QDialog):
         self.retranslateUi(Dialog)
 
         QMetaObject.connectSlotsByName(Dialog)
+
     # setupUi
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.lift1_floorpick_bt.setText(QCoreApplication.translate("Dialog", u"\u0412\u044b\u0437\u0432\u0430\u0442\u044c \u043b\u0438\u0444\u0442 \u043d\u0430 \u044d\u0442\u0430\u0436\u0435..", None))
-        self.lift1_passenger_bt.setText(QCoreApplication.translate("Dialog", u"\u0417\u0430\u0434\u0430\u0442\u044c \u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043f\u0430\u0441\u0441\u0430\u0436\u0438\u0440\u043e\u0432 \u043d\u0430 \u044d\u0442\u0430\u0436\u0430\u0445", None))
-        self.lift2_passenger_bt.setText(QCoreApplication.translate("Dialog", u"\u0417\u0430\u0434\u0430\u0442\u044c \u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043f\u0430\u0441\u0441\u0430\u0436\u0438\u0440\u043e\u0432 \u043d\u0430 \u044d\u0442\u0430\u0436\u0430\u0445", None))
-        self.lift2_floorpick_bt.setText(QCoreApplication.translate("Dialog", u"\u0412\u044b\u0437\u0432\u0430\u0442\u044c \u043b\u0438\u0444\u0442 \u043d\u0430 \u044d\u0442\u0430\u0436\u0435..", None))
-        self.lift1_label.setText(QCoreApplication.translate("Dialog", u"\u041b\u0438\u0444\u0442 \u043f\u0435\u0440\u0432\u043e\u0433\u043e \u043f\u043e\u0434\u044a\u0435\u0437\u0434\u0430:", None))
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"\u041b\u0438\u0444\u0442 \u0432\u0442\u043e\u0440\u043e\u0433\u043e \u043f\u043e\u0434\u044a\u0435\u0437\u0434\u0430:", None))
+        self.lift1_floorpick_bt.setText(QCoreApplication.translate("Dialog",
+                                                                   u"\u0412\u044b\u0437\u0432\u0430\u0442\u044c \u043b\u0438\u0444\u0442 \u043d\u0430 \u044d\u0442\u0430\u0436\u0435..",
+                                                                   None))
+        self.lift1_passenger_bt.setText(QCoreApplication.translate("Dialog",
+                                                                   u"\u0417\u0430\u0434\u0430\u0442\u044c \u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043f\u0430\u0441\u0441\u0430\u0436\u0438\u0440\u043e\u0432 \u043d\u0430 \u044d\u0442\u0430\u0436\u0430\u0445",
+                                                                   None))
+        self.lift2_passenger_bt.setText(QCoreApplication.translate("Dialog",
+                                                                   u"\u0417\u0430\u0434\u0430\u0442\u044c \u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043f\u0430\u0441\u0441\u0430\u0436\u0438\u0440\u043e\u0432 \u043d\u0430 \u044d\u0442\u0430\u0436\u0430\u0445",
+                                                                   None))
+        self.lift2_floorpick_bt.setText(QCoreApplication.translate("Dialog",
+                                                                   u"\u0412\u044b\u0437\u0432\u0430\u0442\u044c \u043b\u0438\u0444\u0442 \u043d\u0430 \u044d\u0442\u0430\u0436\u0435..",
+                                                                   None))
+        self.lift1_label.setText(QCoreApplication.translate("Dialog",
+                                                            u"\u041b\u0438\u0444\u0442 \u043f\u0435\u0440\u0432\u043e\u0433\u043e \u043f\u043e\u0434\u044a\u0435\u0437\u0434\u0430:",
+                                                            None))
+        self.label_2.setText(QCoreApplication.translate("Dialog",
+                                                        u"\u041b\u0438\u0444\u0442 \u0432\u0442\u043e\u0440\u043e\u0433\u043e \u043f\u043e\u0434\u044a\u0435\u0437\u0434\u0430:",
+                                                        None))
+
     # retranslateUi
 
     def lift1_passenger_bt_clicked(self):
@@ -88,6 +98,8 @@ class ControlWindow(QDialog):
         self.house = house
         self.house.elevator1_moved_signal.connect(self.lift1_moved)
         self.house.elevator2_moved_signal.connect(self.lift2_moved)
+        self.house.elevator1_arrived_signal.connect(self.lift1_arrived)
+        self.house.elevator2_arrived_signal.connect(self.lift2_arrived)
 
     def lift1_save_all_passenger(self, passengers):
         for i in range(0, 9):
@@ -116,3 +128,64 @@ class ControlWindow(QDialog):
 
     def lift2_moved(self, floor_num):
         self.display_window.change_elevator_floor(1, floor_num)
+
+    def lift1_arrived(self, t):
+        print('lift 1 arrived')
+        self.fp_windows_1 = []
+        self.counter_1 = t[2]
+        self.destinations_1 = []
+        for i in range(t[2]):
+            floor_passanger_window = FloorPassengerWindow(t[1], t[0])
+            floor_passanger_window.passenger_label.setText('Выберите этаж назначения пассажира ' + str(i + 1))
+            self.fp_windows_1.append(floor_passanger_window)
+            if t[1] == 1:
+                for j in range(t[0] + 1, 9):
+                    floor_passanger_window.comboBox.addItem(str(j + 1))
+            else:
+                for j in range(t[0], 0, -1):
+                    floor_passanger_window.comboBox.addItem(str(j))
+            floor_passanger_window.show()
+            floor_passanger_window.close_signal.connect(self.fp_window_closed_1)
+
+    def lift2_arrived(self, t):
+        self.fp_windows_2 = []
+        self.counter_2 = t[2]
+        self.destinations_2 = []
+        for i in range(t[2]):
+            floor_passanger_window = FloorPassengerWindow(t[1], t[0])
+            floor_passanger_window.passenger_label.setText('Выберите этаж назначения пассажира ' + str(i + 1))
+            self.fp_windows_2.append(floor_passanger_window)
+            if t[1] == 1:
+                for j in range(t[0] + 1, 9):
+                    floor_passanger_window.comboBox.addItem(str(j + 1))
+            else:
+                for j in range(t[0], 0, -1):
+                    floor_passanger_window.comboBox.addItem(str(j))
+            floor_passanger_window.show()
+            floor_passanger_window.close_signal.connect(self.fp_window_closed_2)
+
+    def fp_window_closed_1(self, t):
+        self.counter_1 -= 1
+        self.destinations_1.append(t[2])
+        if self.counter_1 == 0:
+            self.fp_windows_1.clear()
+            self.display_window.change_passengers_lift1(len(self.destinations_1), t[1], t[0])
+            if t[0] == 1:
+                self.house.floors[0][t[1]].add_passengers((-len(self.destinations_1), 0))
+            else:
+                self.house.floors[0][t[1]].add_passengers((0, -len(self.destinations_1)))
+            self.display_window.change_elevator_num(0, len(self.destinations_1))
+            self.house.add_passengers_to_elevator(0, self.destinations_1)
+
+    def fp_window_closed_2(self, t):
+        self.counter_2 -= 1
+        self.destinations_2.append(t[2])
+        if self.counter_2 == 0:
+            self.fp_windows_2.clear()
+            self.display_window.change_passengers_lift1(len(self.destinations_2), t[1], t[0])
+            if t[0] == 1:
+                self.house.floors[1][t[1]].add_passengers((-len(self.destinations_2), 0))
+            else:
+                self.house.floors[1][t[1]].add_passengers((0, -len(self.destinations_2)))
+            self.display_window.change_elevator_num(1, len(self.destinations_2))
+            self.house.add_passengers_to_elevator(1, self.destinations_2)

@@ -113,6 +113,8 @@ class DisplayWindow(QMainWindow):
 
         self.lift1_tw.item(8, 0).setBackground(QColor("green"))
         self.lift2_tw.item(8, 0).setBackground(QColor("green"))
+        self.lift1_tw.item(8, 0).setText('0')
+        self.lift2_tw.item(8, 0).setText('0')
     # setupUi
 
     def retranslateUi(self, MainWindow):
@@ -169,17 +171,48 @@ class DisplayWindow(QMainWindow):
         i = self.lift1_tw.item(0, 1)
         self.lift1_tw.item(8 - floor, 1).setText(f'↑: {passengers[0]} ↓: {passengers[1]}')
 
+    def change_passengers_lift1(self, passengers, floor, direction):
+        num_up = int(self.lift1_tw.item(8 - floor, 1).text().split(' ↓: ')[0].split('↑: ')[1])
+        num_down = int(self.lift1_tw.item(8 - floor, 1).text().split('↓: ')[1])
+        if direction == 1:
+            self.lift1_tw.item(8 - floor, 1).setText(f'↑: {num_up - passengers} ↓: {num_down}')
+        else:
+            self.lift1_tw.item(8 - floor, 1).setText(f'↑: {num_up} ↓: {num_down - passengers}')
+
     def set_passengers_lift2(self, passengers, floor):
         self.lift2_tw.item(8 - floor, 1).setText(f'↑: {passengers[0]} ↓: {passengers[1]}')
+
+    def change_passengers_lift2(self, passengers, floor, direction):
+        num_up = int(self.lift2_tw.item(8 - floor, 1).text().split(' ↓: ')[0].split('↑: ')[1])
+        num_down = int(self.lift2_tw.item(8 - floor, 1).text().split('↓: ')[1])
+        if direction == 1:
+            self.lift2_tw.item(8 - floor, 1).setText(f'↑: {num_up - passengers} ↓: {num_down}')
+        else:
+            self.lift2_tw.item(8 - floor, 1).setText(f'↑: {num_up} ↓: {num_down - passengers}')
+
 
     def change_elevator_floor(self, num_elevator, new_floor):
         print('change elev flor')
         if num_elevator == 0:
             self.lift1_tw.item(8 - self.lift1_floor, 0).setBackground(QColor("white"))
+            text = self.lift1_tw.item(8 - self.lift1_floor, 0).text()
+            self.lift1_tw.item(8 - self.lift1_floor, 0).setText("")
             self.lift1_floor = new_floor
             self.lift1_tw.item(8 - self.lift1_floor, 0).setBackground(QColor("green"))
+            self.lift1_tw.item(8 - self.lift1_floor, 0).setText(text)
         else:
             self.lift2_tw.item(8 - self.lift2_floor, 0).setBackground(QColor("white"))
+            text = self.lift1_tw.item(8 - self.lift1_floor, 0).text()
+            self.lift2_tw.item(8 - self.lift1_floor, 0).setText("")
             self.lift2_floor = new_floor
             self.lift2_tw.item(8 - self.lift2_floor, 0).setBackground(QColor("green"))
+            self.lift2_tw.item(8 - self.lift1_floor, 0).setText(text)
         self.repaint()
+
+    def change_elevator_num(self, num_elevator, change_num):
+        if num_elevator == 0:
+            new_num = int(self.lift1_tw.item(8 - self.lift1_floor, 0).text()) + change_num
+            self.lift1_tw.item(8 - self.lift1_floor, 0).setText(str(new_num))
+        else:
+            new_num = int(self.lift2_tw.item(8 - self.lift2_floor, 0).text()) + change_num
+            self.lift2_tw.item(8 - self.lift2_floor, 0).setText(str(new_num))

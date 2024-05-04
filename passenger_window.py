@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-class PassangerWindow(QDialog):
+class PassengerWindow(QDialog):
     save_passenger_signal = pyqtSignal(list)
     def __init__(self):
         super().__init__()

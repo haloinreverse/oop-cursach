@@ -9,8 +9,10 @@ class Passenger:
 
 
 class Elevator(QObject):
-    new_floor_signal_for_lift = pyqtSignal()
-    new_floor_signal_for_house = pyqtSignal(int)
+    new_floor_signal = pyqtSignal(int)
+    elevator_arrived_signal = pyqtSignal(int)
+    passengers_left_signal = pyqtSignal(int)
+
     def __init__(self, capacity):
         super().__init__()
         self.capacity = capacity
@@ -23,8 +25,7 @@ class Elevator(QObject):
         self.called = False
         # self.timer.start(1000)
         self.timeout = 1000
-        self.new_floor_signal_for_lift.connect(self.move)
-
+        self.new_floor_signal.connect(self.move)
 
     def add_passenger(self, passenger):
         if len(self.passengers) < self.capacity:
@@ -32,27 +33,64 @@ class Elevator(QObject):
             return True
         return False
 
-    def move(self):
+    def move(self, num_floor):
         print('move called')
         self.timer.stop()
-        if self.current_floor != self.target_floor:
-            self.timer.start(self.timeout)
-      #  else:
-       #     self.timer.stop()
-    # todo emit
+        if self.called:
+            if self.current_floor != self.target_floor:
+                self.timer.start(self.timeout)
+            else:
+                self.timer.stop()
+                self.called = False
+                self.elevator_arrived_signal.emit(self.current_floor)
+        else:
+            if len(self.passengers) == 0:
+                self.timer.stop()
+                self.direction = 0
+            else:
+                self.timer.start(self.timeout)
+
+
 
 
     def __change_floor(self):
         print('change floor')
-        #self.timer.stop()
+        # self.timer.stop()
         if self.direction == 1:
             self.current_floor += 1
         elif self.direction == -1:
             self.current_floor -= 1
-        self.new_floor_signal_for_lift.emit()
-        self.new_floor_signal_for_house.emit(self.current_floor)
+        self.new_floor_signal.emit(self.current_floor)
+        if not self.called  and (len(self.passengers) < self.capacity):
+            self.elevator_arrived_signal.emit(self.current_floor)
+            if self.__check_floor_for_passengers():
+                self.passengers_left_signal.emit(self.__passengers_leave())
+        elif not self.called and self.__check_floor_for_passengers():
+            self.passengers_left_signal.emit(self.__passengers_leave())
+            self.elevator_arrived_signal.emit(self.current_floor)
+
         print('change floor - emit done')
 
+    def __passengers_leave(self):
+        count = 0
+        tmp_list = []
+        for i in self.passengers:
+            if i.destination_floor == self.current_floor:
+                count += 1
+            else:
+                tmp_list.append(i)
+        self.passengers = tmp_list
+        return count
+
+
+    def __check_floor_for_passengers(self):
+        for i in self.passengers:
+            if i.destination_floor == self.current_floor:
+                return True
+        return False
+
+    def change_direction(self, direction):
+        self.direction = direction
 
     def open_doors(self):
         # Implementation for opening doors
@@ -71,23 +109,31 @@ class Floor:
         self.num_passengers_up = 0
         self.num_passengers_down = 0
 
-    def add_passengers(self, passengers):
+    def set_passengers(self, passengers):
         self.num_passengers_up = passengers[0]
         self.num_passengers_down = passengers[1]
+
+    def add_passengers(self, passengers):
+        self.num_passengers_up -= passengers[0]
+        self.num_passengers_down -= passengers[1]
 
 
 class House(QObject):
     elevator1_moved_signal = pyqtSignal(int)
     elevator2_moved_signal = pyqtSignal(int)
+    elevator1_arrived_signal = pyqtSignal(tuple)
+    elevator2_arrived_signal = pyqtSignal(tuple)
+
     def __init__(self, num_elevators, num_floors, elevator_capacity):
         super().__init__()
         self.elevators = [Elevator(elevator_capacity) for _ in range(num_elevators)]
-        self.floors = [[Floor(number) for number in range(1, num_floors + 1)], [Floor(number) for number in range(1, num_floors + 1)]]
+        self.floors = [[Floor(number) for number in range(1, num_floors + 1)],
+                       [Floor(number) for number in range(1, num_floors + 1)]]
 
-        self.elevators[0].new_floor_signal_for_house.connect(self.elevator_1_moved)
-        self.elevators[1].new_floor_signal_for_house.connect(self.elevator_2_moved)
-
-
+        self.elevators[0].new_floor_signal.connect(self.elevator_1_moved)
+        self.elevators[1].new_floor_signal.connect(self.elevator_2_moved)
+        self.elevators[0].elevator_arrived_signal.connect(self.elevator1_arrived)
+        self.elevators[1].elevator_arrived_signal.connect(self.elevator2_arrived)
 
     def call_elevator(self, elevator_num, floor_number, direction):
         if self.elevators[elevator_num].direction != 0:
@@ -102,12 +148,15 @@ class House(QObject):
 
         elif direction == -1:
             self.floors[elevator_num][floor_number].call_down_button = True
+        self.elevators[elevator_num].called = True
         self.elevators[elevator_num].target_floor = floor_number
-        self.elevators[elevator_num].move()
+        self.elevators[elevator_num].move(floor_number)
         print("call_elev from house")
 
-
         return True
+
+    def start_moving_elevator(self, elevator_num):
+        self.elevators[elevator_num].move(0)
 
     def elevator_1_moved(self, floor_num):
         print('elev 1 move')
@@ -117,8 +166,55 @@ class House(QObject):
         print('elev 2 move')
         self.elevator2_moved_signal.emit(floor_num)
 
+    def add_passengers_to_elevator(self, elevator_num, passengers):
+        for i in passengers:
+            passenger = Passenger(i)
+            self.elevators[elevator_num].add_passenger(passenger)
+
+
     def add_passangers_to_floor(self, elevator_num, floor, passangers):
-        self.floors[elevator_num][floor].add_passengers(passangers)
+        self.floors[elevator_num][floor].set_passengers(passangers)
+
+    def elevator1_arrived(self, num_floor):
+        if self.floors[0][num_floor].call_up_button:
+            if self.floors[0][num_floor].num_passengers_up > 0:
+                self.floors[0][num_floor].call_up_button = False
+                self.elevators[0].change_direction(1)
+                direction = 1
+                self.elevator1_arrived_signal.emit((num_floor, direction,
+                                                    min(self.floors[0][num_floor].num_passengers_up,
+                                                        self.elevators[0].capacity)
+                                                    ))
+        elif self.floors[0][num_floor].call_down_button:
+            if self.floors[0][num_floor].num_passengers_down > 0:
+                self.floors[0][num_floor].call_down_button = False
+                self.elevators[0].change_direction(-1)
+                direction = -1
+                self.elevator1_arrived_signal.emit(
+                    (num_floor, direction, min(self.floors[0][num_floor].num_passengers_down,
+                                               self.elevators[0].capacity)))
+        else:
+            if self.elevators[0].direction == 1:
+                if self.floors[0][num_floor].num_passengers_up > 0:
+                    self
+
+    def elevator2_arrived(self, num_floor):
+        if self.floors[1][num_floor].call_up_button:
+            if self.floors[1][num_floor].num_passengers_up > 0:
+                self.floors[1][num_floor].call_up_button = False
+                self.elevators[1].change_direction(1)
+                direction = 1
+                self.elevator2_arrived_signal.emit((num_floor, direction,
+                                                    min(self.floors[1][num_floor].num_passengers_up,
+                                                        self.elevators[1].capacity)))
+        elif self.floors[1][num_floor].call_down_button:
+            if self.floors[1][num_floor].num_passengers_down > 0:
+                self.floors[1][num_floor].call_down_button = False
+                self.elevators[1].change_direction(-1)
+                direction = -1
+                self.elevator2_arrived_signal.emit((num_floor, direction,
+                                                    min(self.floors[1][num_floor].num_passengers_down,
+                                                        self.elevators[1].capacity)))
 
 
 if __name__ == "__main__":
@@ -126,11 +222,8 @@ if __name__ == "__main__":
     house = House(num_elevators=2, num_floors=9, elevator_capacity=4)
     # elevator_control_system = ElevatorControlSystem(house)
 
-
     control_window = ControlWindow()
     control_window.set_house(house)
     control_window.show()
 
-
     sys.exit(app.exec_())
-

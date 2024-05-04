@@ -3,9 +3,13 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 class FloorPassengerWindow(QDialog):
-    def __init__(self):
+    close_signal = pyqtSignal(tuple)
+    def __init__(self, direction, floor):
         super().__init__()
         self.setupUi(self)
+        self.direction = direction
+        self.floor = floor
+        self.save_passenger_pb.clicked.connect(self.close)
         # self.show()
 
 
@@ -42,3 +46,11 @@ class FloorPassengerWindow(QDialog):
         self.passenger_label.setText(QCoreApplication.translate("Dialog", u"\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u044d\u0442\u0430\u0436 \u043d\u0430\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u044f \u043f\u0430\u0441\u0441\u0430\u0436\u0438\u0440\u0430 1:", None))
         self.save_passenger_pb.setText(QCoreApplication.translate("Dialog", u"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c", None))
     # retranslateUi
+
+    # def close(self) -> bool:
+    #     self.close_signal.emit(self.direction, self.floor, int(self.comboBox.currentText()) - 1)
+    #     return super().close()
+
+    def closeEvent(self, event):
+        self.close_signal.emit((self.direction, self.floor, int(self.comboBox.currentText()) - 1))
+        event.accept()
