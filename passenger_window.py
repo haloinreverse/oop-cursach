@@ -147,10 +147,10 @@ class PassengerWindow(QDialog):
 
         self.gridLayout.addWidget(self.floornum4_label, 6, 0, 1, 1)
 
-        self.liftname_label = QLabel(Dialog)
-        self.liftname_label.setObjectName(u"liftname_label")
+        self.elevatorname_label = QLabel(Dialog)
+        self.elevatorname_label.setObjectName(u"elevatorname_label")
 
-        self.gridLayout.addWidget(self.liftname_label, 0, 2, 1, 1)
+        self.gridLayout.addWidget(self.elevatorname_label, 0, 2, 1, 1)
 
         self.floornum5_label = QLabel(Dialog)
         self.floornum5_label.setObjectName(u"floornum5_label")
@@ -266,7 +266,7 @@ class PassengerWindow(QDialog):
         self.down_le_5.setText(QCoreApplication.translate("Dialog", u"0", None))
         self.down_label_4.setText(QCoreApplication.translate("Dialog", u"\u0412\u043d\u0438\u0437:", None))
         self.floornum4_label.setText(QCoreApplication.translate("Dialog", u"\u042d\u0442\u0430\u0436 4", None))
-        self.liftname_label.setText(QCoreApplication.translate("Dialog", u"\u041b\u0438\u0444\u0442 \u043f\u043e\u0434\u044a\u0435\u0437\u0434\u0430 1", None))
+        self.elevatorname_label.setText(QCoreApplication.translate("Dialog", u"\u041b\u0438\u0444\u0442 \u043f\u043e\u0434\u044a\u0435\u0437\u0434\u0430 1", None))
         self.floornum5_label.setText(QCoreApplication.translate("Dialog", u"\u042d\u0442\u0430\u0436 5", None))
         self.down_label_2.setText(QCoreApplication.translate("Dialog", u"\u0412\u043d\u0438\u0437:", None))
         self.up_le_3.setText(QCoreApplication.translate("Dialog", u"0", None))

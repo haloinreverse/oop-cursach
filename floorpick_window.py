@@ -3,11 +3,11 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 class FloorPickWindow(QDialog):
-    lift_called_signal = pyqtSignal(tuple)
+    elevator_called_signal = pyqtSignal(tuple)
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.call_lift_pb.clicked.connect(self.call_lift_pb_clicked)
+        self.call_elevator_pb.clicked.connect(self.call_elevator_pb_clicked)
         # self.show()
 
     def setupUi(self, Dialog):
@@ -38,10 +38,10 @@ class FloorPickWindow(QDialog):
 
         self.verticalLayout.addWidget(self.go_down_rb)
 
-        self.call_lift_pb = QPushButton(Dialog)
-        self.call_lift_pb.setObjectName(u"call_lift_pb")
+        self.call_elevator_pb = QPushButton(Dialog)
+        self.call_elevator_pb.setObjectName(u"call_elevator_pb")
 
-        self.verticalLayout.addWidget(self.call_lift_pb)
+        self.verticalLayout.addWidget(self.call_elevator_pb)
 
 
         self.retranslateUi(Dialog)
@@ -54,10 +54,10 @@ class FloorPickWindow(QDialog):
         self.floor_number_label.setText(QCoreApplication.translate("Dialog", u"\u041d\u043e\u043c\u0435\u0440 \u044d\u0442\u0430\u0436\u0430:", None))
         self.go_up_rb.setText(QCoreApplication.translate("Dialog", u"\u0415\u0445\u0430\u0442\u044c \u0432\u0432\u0435\u0440\u0445", None))
         self.go_down_rb.setText(QCoreApplication.translate("Dialog", u"\u0415\u0445\u0430\u0442\u044c \u0432\u043d\u0438\u0437", None))
-        self.call_lift_pb.setText(QCoreApplication.translate("Dialog", u"\u0412\u044b\u0437\u0432\u0430\u0442\u044c", None))
+        self.call_elevator_pb.setText(QCoreApplication.translate("Dialog", u"\u0412\u044b\u0437\u0432\u0430\u0442\u044c", None))
     # retranslateUi
 
-    def call_lift_pb_clicked(self):
+    def call_elevator_pb_clicked(self):
         floor = int(self.floor_number_le.text()) - 1
         self.close()
         direction = 0
@@ -65,4 +65,4 @@ class FloorPickWindow(QDialog):
             direction = 1
         else:
             direction = -1
-        self.lift_called_signal.emit((floor, direction))
+        self.elevator_called_signal.emit((floor, direction))
